@@ -36,7 +36,7 @@ public class WeatherDataServiceImpl implements WeatherDataService {
                 .orElseGet(()->
                         locationRepository.save(
                                 Location.builder()
-                                        .cityName(weatherRequestDto.cityName)
+                                        .cityName(weatherRequestDto.getCityName())
                                         .build()
                         )
                 );
