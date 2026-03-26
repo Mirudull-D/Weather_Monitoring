@@ -18,7 +18,7 @@ public class Location {
     private UUID id;
 
     @Column(nullable = false)
-    private String Cityname;
+    private String cityName;
 
     @Column
     private String latitude;
