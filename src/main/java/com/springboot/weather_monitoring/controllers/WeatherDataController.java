@@ -8,10 +8,9 @@ import com.springboot.weather_monitoring.repositories.LocationRepository;
 import com.springboot.weather_monitoring.services.WeatherDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/weather")
@@ -35,4 +34,10 @@ public class WeatherDataController {
         return ResponseEntity.ok(weatherResponseDto);
     }
 
+    @GetMapping(path = "/history")
+    public ResponseEntity<List<WeatherData>> getWeatherHistory(@RequestParam String cityName){
+
+        List<WeatherData> history = weatherDataService.getHistory(cityName);
+        return ResponseEntity.ok(history);
+    }
 }

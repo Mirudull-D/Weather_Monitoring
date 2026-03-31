@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +56,10 @@ public class WeatherDataServiceImpl implements WeatherDataService {
 
         return weatherDataRepository.save(weatherData);
 
+    }
+
+    @Override
+    public List<WeatherData> getHistory(String cityName) {
+        return weatherDataRepository.findByLocationCityNameOrderByRecordedAtDesc(cityName);
     }
 }
