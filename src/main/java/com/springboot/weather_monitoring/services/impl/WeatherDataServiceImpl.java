@@ -1,11 +1,13 @@
 package com.springboot.weather_monitoring.services.impl;
 
+import com.springboot.weather_monitoring.domains.dtos.DailySummaryDto;
 import com.springboot.weather_monitoring.domains.dtos.OpenWeatherResponse;
 import com.springboot.weather_monitoring.domains.dtos.WeatherRequestDto;
 import com.springboot.weather_monitoring.domains.entities.Location;
 import com.springboot.weather_monitoring.domains.entities.WeatherData;
 import com.springboot.weather_monitoring.mappers.OpenWeatherMapper;
 
+import com.springboot.weather_monitoring.repositories.DailySummaryRepository;
 import com.springboot.weather_monitoring.repositories.LocationRepository;
 import com.springboot.weather_monitoring.repositories.WeatherDataRepository;
 import com.springboot.weather_monitoring.services.WeatherDataService;
@@ -14,8 +16,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class WeatherDataServiceImpl implements WeatherDataService {
     public final RestTemplate restTemplate;
     private final OpenWeatherMapper openWeatherMapper;
     private final LocationRepository locationRepository;
+    private final DailySummaryRepository dailySummaryRepository;
 
 
     @Value("${weather.api.key}")
@@ -61,5 +66,19 @@ public class WeatherDataServiceImpl implements WeatherDataService {
     @Override
     public List<WeatherData> getHistory(String cityName) {
         return weatherDataRepository.findByLocationCityNameOrderByRecordedAtDesc(cityName);
+    }
+
+    @Override
+    public List<DailySummaryDto> getDailySummary(String city) {
+        List<Object[]> results = dailySummaryRepository.getDailySummaryRaw(city);
+
+        return results.stream().map(result -> {
+            return new DailySummaryDto(
+                    LocalDate.parse(result[0].toString()),
+                    ((Number) result[1]).doubleValue(),
+                    ((Number) result[2]).doubleValue(),
+                    ((Number) result[3]).doubleValue()
+            );
+        }).collect(Collectors.toList());
     }
 }
